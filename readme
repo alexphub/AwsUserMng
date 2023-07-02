@@ -1,0 +1,62 @@
+User Management and Bulk Operations API
+
+The service is implemented as:
+API Gateway (REST API) <---> Lambda Functions( addUser, getUser, delUser, addUsersBulk) <----> DynamoDB
+
+1. Create IAM Roles with AmazonDynamoDBFullAccess and AWSLambdaDBExecutionRole
+2. Cretae DynamoDB a new table for store users by userId
+3. Create Lambda funcion for AddUser, getUser, delUser and addUserBulk. Upload zip file for every function and deploy.
+4. Create new API Gateway API with REST. Define Methods: POST, GET and DELETE
+5. Integrate the Methods with Lambda functions
+6. Deploy API, should get as: https://6kdrvas31a.execute-api.us-east-2.amazonaws.com/users
+
+For testing 
+1. I recomended using POSTMAN
+2. Create Method POST, request URI: https://6kdrvas31a.execute-api.us-east-2.amazonaws.com/users
+body raw JSON, for example:
+{
+  "firstName": "TesterAbc",
+  "lastName": "lastTesterAbc",
+  "email": "a@abc.com",
+  "password": "67890"
+}
+
+call "Send"
+response should be as:
+{
+    "statusCode": 201,
+    "body": "{\"user_id\":\"1688309887142-luhcis\"}"
+}
+
+3. Create Method GET, request URI: https://6kdrvas31a.execute-api.us-east-2.amazonaws.com/users/1688309887142-luhcis
+call "Send"
+response should be:
+{
+    "password": "67890",
+    "id": "1688312919601-10dysi",
+    "email": "a@abc.com",
+    "firstName": "TesterAbc",
+    "lastName": "lastTesterAbc"
+}
+
+4. Create Method DELETE, request URI: https://6kdrvas31a.execute-api.us-east-2.amazonaws.com/users/1688309887142-luhcis
+call "Send"
+response should be as:
+{
+    "message": "Item deleted successfully"
+}
+
+5. Create Method POST, request URI: https://6kdrvas31a.execute-api.us-east-2.amazonaws.com/users/bulk
+body raw Text, for example
+1,John,Doe,johndoe@example.com,Password2222
+2,Jane,Smith,janesmith@example.com,Password456
+3,Mark,Taylor,marktaylor@example.com,Password789
+4,Sarah,Johnson,sarahjohnson@example.com,Password101
+5,Robert,Brown,robertbrown@example.com,Password102
+
+call "Send"
+response should be as:
+"{user: John id: 1,user: Jane id: 2,user: Mark id: 3,user: Sarah id: 4,}"
+
+
+
