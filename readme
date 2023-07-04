@@ -56,7 +56,13 @@ body raw Text, for example
 
 call "Send"
 response should be as:
-"{user: John id: 1,user: Jane id: 2,user: Mark id: 3,user: Sarah id: 4,}"
+"{{user: John id: 1},{user: Jane id: 2},{user: Mark id: 3},{user: Sarah id: 4}}"
+
+for curl:
+put users parameters to the file users and call  as:
+curl -X POST -H "Content-Type: text/plain" --data-binary @users https://6kdrvas31a.execute-api.us-east-2.amazonaws.com/users/bulk
+
+
 
 
 
