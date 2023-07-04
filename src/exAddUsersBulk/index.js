@@ -19,7 +19,7 @@ exports.handler = async (event) => {
     
     //console.info("line length" + lines.length);
     
-    let users_id ="{ ";
+    let users_id ="{{";
     for (let i = 0; i <lines.length; i++) {
         
       let user = lines[i].split(',');
@@ -35,14 +35,14 @@ exports.handler = async (event) => {
       let userId = await saveUserToDynamoDB(user);
       console.info("user[" + i + "]" + user[1] + " " + user[2] + " id: " + userId );
       
-      users_id += "user: " + user[1] + ", id: " + userId;
+      users_id += "user: " + user[1] + ", id: " + userId + "}";
       
       if (i < lines.length - 1) {
-        users_id += ", ";
+        users_id += ", {";
       }
     }
     
-    users_id += " }";
+    users_id += "}";
     
     let msg = JSON.stringify(users_id);
     
