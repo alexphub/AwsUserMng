@@ -14,20 +14,43 @@ exports.handler = async (event) => {
     let obj = JSON.parse(JSON.stringify(event));
     console.info("event(body)\n" + obj.body);
     
-    let lines = obj.body.split('\r\n');
-    console.info("line[0]" + lines[0]);
+    let delimmiter = '\n';
+    let index = obj.body.indexOf(delimmiter);
+    if (index == -1) {
+      index = obj.body.indexOf('\r');
+      delimmiter = '\r';
+    }
+
+    let lines = [];
+    if (index == -1) {
+      if (obj.body.length == 0) {
+        return {
+          statusCode: 500,
+          body: JSON.stringify({ error: "line delimiter no present" }),
+        };
+      }
+      
+      lines[0] = obj.body;
+    }
+    else {
+      lines = obj.body.split(delimmiter);
+    }
     
+    console.info("line[0]" + lines[0]);
     //console.info("line length" + lines.length);
     
     let users_id ="{{";
+    let count = 0;
     for (let i = 0; i <lines.length; i++) {
+      
+      if (lines[i].length == 0) {
+        continue;
+      }
         
       let user = lines[i].split(',');
       if (user.length != 5) {
-        return {
-          statusCode: 500,
-          body: JSON.stringify({ error: "parse user parameters failed" }),
-        };
+        console.info("bad user: " + user);
+        continue;
       }
         
       console.info("user[" + i + "]" + user[1] + " " + user[2]);
@@ -40,6 +63,15 @@ exports.handler = async (event) => {
       if (i < lines.length - 1) {
         users_id += ", {";
       }
+      
+      count += 1;
+    }
+    
+    if (count == 0) {
+          return {
+          statusCode: 500,
+          body: JSON.stringify({ error: "parse user parameters failed" }),
+        };
     }
     
     users_id += "}";
